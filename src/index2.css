@@ -7,30 +7,22 @@
     scroll-behavior: smooth;
     background-color: #0a0908;
     color: #ede4d3;
-    width: 100%;
-    max-width: 100%;
-    overflow-x: hidden;
   }
-
+  
   body {
     background-color: #0a0908;
     color: #ede4d3;
-    width: 100%;
-    max-width: 100%;
-    overflow-x: hidden;
-    position: relative;
-  }
-
-  #root {
-    width: 100%;
-    max-width: 100%;
     overflow-x: hidden;
   }
 
+  /* Custom Parchment Noise Texture Overlay */
   body::before {
     content: "";
     position: fixed;
-    inset: 0;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
     background-image: radial-gradient(rgba(201, 162, 75, 0.04) 1px, transparent 1px);
     background-size: 24px 24px;
     pointer-events: none;
