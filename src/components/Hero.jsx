@@ -101,6 +101,7 @@ export default function Hero() {
 
   const [loadedCount, setLoadedCount] = useState(0);
   const [isReady, setIsReady] = useState(false);
+  const [pinMode, setPinMode] = useState('FIXED');
 
   const scrollProgress = useMotionValue(0);
 
@@ -239,13 +240,22 @@ export default function Hero() {
       const totalScrollableHeight = rect.height - viewportHeight;
       if (totalScrollableHeight <= 0) return;
 
+      // Deterministic pin mode calculation
+      if (rect.top > 0) {
+        setPinMode('TOP');
+      } else if (rect.bottom <= viewportHeight) {
+        setPinMode('BOTTOM');
+      } else {
+        setPinMode('FIXED');
+      }
+
       const scrollPosition = Math.max(0, -rect.top);
       const progress = Math.min(1, Math.max(0, scrollPosition / totalScrollableHeight));
 
       scrollProgress.set(progress);
 
-      // Map frame sequence to complete over the first 75% of sticky scroll distance
-      const frameProgress = Math.min(1, Math.max(0, progress / 0.75));
+      // Map frame sequence to complete over the first 80% of scroll distance
+      const frameProgress = Math.min(1, Math.max(0, progress / 0.80));
       const targetFrame = Math.floor(frameProgress * (TOTAL_FRAMES - 1));
       currentFrameRef.current = targetFrame;
 
@@ -264,10 +274,17 @@ export default function Hero() {
     };
   }, [renderFrame, scrollProgress]);
 
+  // Compute wrapper style based on pin mode
+  const wrapperStyle = pinMode === 'FIXED'
+    ? { position: 'fixed', top: 0, left: 0, width: '100%', height: '100vh', zIndex: 10 }
+    : pinMode === 'BOTTOM'
+    ? { position: 'absolute', bottom: 0, top: 'auto', left: 0, width: '100%', height: '100vh', zIndex: 10 }
+    : { position: 'absolute', top: 0, left: 0, width: '100%', height: '100vh', zIndex: 10 };
+
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-[450vh] bg-veil-black"
+      className="relative w-full h-[400vh] sm:h-[450vh] bg-veil-black"
     >
       <AnimatePresence>
         {!isReady && (
@@ -298,7 +315,8 @@ export default function Hero() {
 
       <div
         ref={canvasWrapperRef}
-        className="sticky top-0 left-0 w-full max-w-full h-[100dvh] overflow-hidden flex items-center justify-center z-10"
+        style={wrapperStyle}
+        className="overflow-hidden flex items-center justify-center"
       >
         <canvas ref={canvasRef} className="w-full h-full object-cover block" />
 
