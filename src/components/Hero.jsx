@@ -267,7 +267,7 @@ export default function Hero() {
   return (
     <div
       ref={containerRef}
-      className="relative w-full max-w-full h-[450svh] bg-veil-black overflow-x-hidden"
+      className="relative w-full h-[450vh] bg-veil-black"
     >
       <AnimatePresence>
         {!isReady && (

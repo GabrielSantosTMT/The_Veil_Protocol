@@ -12,9 +12,9 @@ import Footer from './components/Footer';
 
 export default function App() {
   return (
-    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-veil-black text-veil-text selection:bg-veil-gold selection:text-veil-black relative">
+    <div className="min-h-screen w-full bg-veil-black text-veil-text selection:bg-veil-gold selection:text-veil-black relative">
       <Navbar />
-      <main className="w-full max-w-full overflow-x-hidden">
+      <main className="w-full">
         <Hero />
         <Intro />
         <Questions />
