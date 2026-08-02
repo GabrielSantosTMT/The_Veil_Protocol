@@ -9,22 +9,22 @@
     color: #ede4d3;
     width: 100%;
     max-width: 100%;
-    overflow-x: hidden;
+    overflow-x: hidden !important;
   }
-
+  
   body {
     background-color: #0a0908;
     color: #ede4d3;
     width: 100%;
     max-width: 100%;
-    overflow-x: hidden;
+    overflow-x: hidden !important;
     position: relative;
   }
 
   #root {
     width: 100%;
     max-width: 100%;
-    overflow-x: hidden;
+    overflow-x: hidden !important;
   }
 
   body::before {

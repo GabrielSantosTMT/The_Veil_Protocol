@@ -14,9 +14,9 @@ export default function Access() {
   ];
 
   return (
-    <section id="access" className="py-24 sm:py-32 bg-veil-black border-t border-veil-gold/20 relative">
+    <section id="access" className="py-24 sm:py-32 bg-veil-black border-t border-veil-gold/20 relative overflow-hidden">
       {/* Glow effect */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-gold-glow opacity-30 blur-3xl pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] max-w-[90vw] h-[700px] bg-gold-glow opacity-30 blur-3xl pointer-events-none" />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         

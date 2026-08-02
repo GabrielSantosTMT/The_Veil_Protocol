@@ -22,7 +22,7 @@ export default function Questions() {
   ];
 
   return (
-    <section id="questions" className="py-24 bg-veil-dark border-t border-veil-gold/20 relative">
+    <section id="questions" className="py-24 bg-veil-dark border-t border-veil-gold/20 relative overflow-hidden">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header */}

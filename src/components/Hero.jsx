@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useCallback, useState } from 'react';
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
-import { ChevronDown, Sparkles } from 'lucide-react';
+import { ChevronDown, Sparkles, ShieldCheck } from 'lucide-react';
 import CTAButton from './CTAButton';
 
 const TOTAL_FRAMES = 120;
@@ -103,10 +103,21 @@ export default function Hero() {
   const [isReady, setIsReady] = useState(false);
 
   const scrollProgress = useMotionValue(0);
-  const titleOpacity = useTransform(scrollProgress, (p) => Math.max(0, 1 - p * 2.5));
-  const midScrollOpacity = useTransform(scrollProgress, (p) =>
-    Math.max(0, Math.sin((p - 0.4) * 3.14 * 2.2))
-  );
+
+  // Phase 1 Title: Fades out quickly (0 to 0.25)
+  const titleOpacity = useTransform(scrollProgress, (p) => Math.max(0, 1 - p * 4));
+  
+  // Phase 2 Tagline: Appears in mid-sequence (0.25 to 0.65)
+  const midScrollOpacity = useTransform(scrollProgress, (p) => {
+    if (p < 0.25 || p > 0.70) return 0;
+    return Math.sin(((p - 0.25) / 0.45) * Math.PI);
+  });
+
+  // Phase 3 Unveiled Badge: Appears when animation completes in center (0.75 to 1.0)
+  const endUnveiledOpacity = useTransform(scrollProgress, (p) => {
+    if (p < 0.72) return 0;
+    return Math.min(1, (p - 0.72) * 5);
+  });
 
   const progressPercent = Math.min(100, Math.round((loadedCount / TOTAL_FRAMES) * 100));
 
@@ -233,7 +244,9 @@ export default function Hero() {
 
       scrollProgress.set(progress);
 
-      const targetFrame = Math.floor(progress * (TOTAL_FRAMES - 1));
+      // Map frame sequence to complete over the first 75% of sticky scroll distance
+      const frameProgress = Math.min(1, Math.max(0, progress / 0.75));
+      const targetFrame = Math.floor(frameProgress * (TOTAL_FRAMES - 1));
       currentFrameRef.current = targetFrame;
 
       if (scrollRafIdRef.current) cancelAnimationFrame(scrollRafIdRef.current);
@@ -254,7 +267,7 @@ export default function Hero() {
   return (
     <div
       ref={containerRef}
-      className="relative w-full max-w-[100vw] h-[400svh] bg-veil-black overflow-x-hidden"
+      className="relative w-full max-w-full h-[450svh] bg-veil-black overflow-x-hidden"
     >
       <AnimatePresence>
         {!isReady && (
@@ -273,7 +286,7 @@ export default function Hero() {
             <p className="text-xs text-veil-muted tracking-widest font-sans mb-4 uppercase">
               Loading Cinematic Sequence ({progressPercent}%)
             </p>
-            <div className="w-64 max-w-[70vw] h-1.5 bg-veil-stone rounded-full overflow-hidden border border-veil-gold/30">
+            <div className="w-64 max-w-[85%] h-1.5 bg-veil-stone rounded-full overflow-hidden border border-veil-gold/30">
               <div
                 className="h-full bg-gold-gradient transition-all duration-300 rounded-full"
                 style={{ width: `${progressPercent}%` }}
@@ -285,12 +298,13 @@ export default function Hero() {
 
       <div
         ref={canvasWrapperRef}
-        className="sticky top-0 left-0 w-full max-w-[100vw] h-[100svh] overflow-hidden flex items-center justify-center z-10"
+        className="sticky top-0 left-0 w-full max-w-full h-[100dvh] overflow-hidden flex items-center justify-center z-10"
       >
         <canvas ref={canvasRef} className="w-full h-full object-cover block" />
 
         <div className="absolute inset-0 bg-radial-vignette pointer-events-none bg-gradient-to-t from-veil-black via-transparent to-veil-black/80" />
 
+        {/* Phase 1: Main Title */}
         <motion.div
           className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center z-20 pointer-events-none"
           style={{ opacity: titleOpacity }}
@@ -320,20 +334,37 @@ export default function Hero() {
           </div>
         </motion.div>
 
+        {/* Phase 2: Mid-scroll Tagline */}
         <motion.div
           className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center z-20 pointer-events-none"
           style={{ opacity: midScrollOpacity }}
         >
-          <div className="max-w-3xl mx-auto bg-veil-black/80 backdrop-blur-md p-8 rounded-lg border border-veil-gold/30 shadow-2xl">
+          <div className="max-w-3xl mx-auto bg-veil-black/85 backdrop-blur-md p-6 sm:p-8 rounded-lg border border-veil-gold/30 shadow-2xl">
             <span className="text-xs font-cinzel text-veil-gold tracking-[0.3em] uppercase block mb-2">
               13 Documented Revelations
             </span>
-            <h2 className="font-cinzel text-2xl sm:text-4xl font-bold text-veil-text tracking-wider uppercase mb-4">
+            <h2 className="font-cinzel text-xl sm:text-3xl font-bold text-veil-text tracking-wider uppercase mb-3">
               "What if everything you were taught about human origin is only half the story?"
             </h2>
-            <p className="font-sans text-sm sm:text-base text-veil-muted leading-relaxed font-light">
+            <p className="font-sans text-xs sm:text-sm text-veil-muted leading-relaxed font-light">
               Scroll deeper into forgotten manuscripts, suppressed canonical texts, and biblical archaeology.
             </p>
+          </div>
+        </motion.div>
+
+        {/* Phase 3: Animation Finished in Center -> Scroll down prompt */}
+        <motion.div
+          className="absolute inset-0 flex flex-col items-center justify-end pb-16 px-4 text-center z-20 pointer-events-none"
+          style={{ opacity: endUnveiledOpacity }}
+        >
+          <div className="inline-flex flex-col items-center gap-2 bg-veil-black/90 border border-veil-gold/50 px-6 py-3 rounded-full backdrop-blur-md shadow-gold">
+            <div className="flex items-center gap-2 text-veil-gold text-xs font-cinzel tracking-widest uppercase font-bold">
+              <ShieldCheck className="w-4 h-4 text-veil-gold" />
+              <span>Protocol Unveiled</span>
+            </div>
+            <span className="text-[10px] font-sans text-veil-muted tracking-wider uppercase flex items-center gap-1">
+              Scroll Down to Continue Investigation <ChevronDown className="w-3.5 h-3.5 text-veil-gold animate-bounce" />
+            </span>
           </div>
         </motion.div>
       </div>
